@@ -9,7 +9,8 @@ def get_corners(center, size, yaw):
     Args:
         center (np.ndarray): Bbox centers with shape (n, 2).
         size (np.ndarray): Bbox shape with shape (n, 2), represents the W and L in lidar coordinate systems.
-        yaw (np.ndarray): Bbox yaw with shape (n,), same as rotation_y in kitti-format, ranges in [-pi, pi].
+        yaw (np.ndarray): Bbox yaw with shape (n,), same as rotation_y in kitti-format, ranges in
+            [-pi, pi].
 
     Returns:
         all_corners (np.ndarray): Bbox corners matrix, with shape (n, 4, 2).
@@ -22,10 +23,12 @@ def get_corners(center, size, yaw):
     length = center.shape[0]
     for idx in range(length):
         rot = np.asmatrix([[yaw_cos[idx], -yaw_sin[idx]], [yaw_sin[idx], yaw_cos[idx]]])
-        plain_pts = np.asmatrix([[0.5 * size[idx][0], 0.5 * size[idx][1]], [0.5 * size[idx][0], -0.5 * size[idx][1]], \
-                                 [-0.5 * size[idx][0], -0.5 * size[idx][1]], [-0.5 * size[idx][0], 0.5 * size[idx][1]]])
-        tran_pts = np.asarray(rot * plain_pts.transpose())
-        tran_pts = tran_pts.transpose()
+        plain_pts = np.asmatrix([
+            [0.5 * size[idx][0], 0.5 * size[idx][1]], [0.5 * size[idx][0], -0.5 * size[idx][1]],
+            [-0.5 * size[idx][0], -0.5 * size[idx][1]], [-0.5 * size[idx][0], 0.5 * size[idx][1]]
+        ])
+        tran_pts = np.asarray(rot * plain_pts.transpose())  # 2x2 @ 2x4 -> 2x4
+        tran_pts = tran_pts.transpose()  # 2x4 -> 4x2
 
         tran_pts = tran_pts[[3, 2, 1, 0], :]
 
